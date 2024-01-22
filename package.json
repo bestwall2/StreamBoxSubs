@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "express": "^4.18.2",
+    "google-it": "^1.6.4",
+    "iconv-lite": "^0.6.3",
+    "node-subscene-api": "^1.1.1",
+    "nodemon": "^3.0.2",
+    "request": "^2.88.2",
+    "sanitize-filename": "^1.6.3",
+    "subscene": "^0.0.1"
+  }
+}
