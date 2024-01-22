@@ -2,7 +2,7 @@ const express = require('express');
 const { searchForSubM, searchForSubTv, DownloadByPath} = require('./SubTools'); // Assuming you have the searchForSubM module
 const sanitizeFilename = require('sanitize-filename'); 
 const app = express();
-const port = 5000;
+const port = 3000;
 
 const {getSubText, getTvSubs, getMovSubs} = require('./opensubs')
 // Middleware to parse JSON requests
