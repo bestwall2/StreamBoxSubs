@@ -9,7 +9,7 @@ const {getSubText, getTvSubs, getMovSubs} = require('./opensubs')
 app.use(express.json());
 
 // Route to search for movie subtitles
-app.head('/', async (req, res) => {
+app.get('/', async (req, res) => {
   res.send("Welcome to my Api");
  });
 app.get('/SearchSubMv', async (req, res) => {
