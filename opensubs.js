@@ -100,5 +100,5 @@ function getMovSubs(imdbId, sublanguageId) {
     });
   });
 }
-
+ 
 module.exports = { getSubText, getMovSubs, getTvSubs };
