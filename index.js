@@ -154,7 +154,7 @@ app.get('/anime/:id/:epNumber', async (req, res) => {
         res.send(resultJSON);
     } catch (error) {
         console.error('Error fetching anime details:', error.message);
-        res.status(500).json({ error: 'Internal server error.' });
+        res.status(500).json({ error: 'Internal server error.' + error });
     }
 });
 
