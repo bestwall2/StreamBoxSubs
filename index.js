@@ -144,11 +144,20 @@ app.get('/SubsMv', async (req, res) => {
 });
 
 app.get('/anime/:id/:epNumber', async (req, res) => {
-  const { id, epNumber } = req.params;
-  
-  const result_s = await getStreamUrl(id,epNumber);
-  res.send(result_s);
+    try {
+        const { id, epNumber } = req.params;
+        const result_s = await getStreamUrl(id, epNumber);
+        
+        // Convert the result to JSON if it's an object or array
+        const resultJSON = typeof result_s === 'object' ? JSON.stringify(result_s) : result_s;
+
+        res.send(resultJSON);
+    } catch (error) {
+        console.error('Error fetching anime details:', error.message);
+        res.status(500).json({ error: 'Internal server error.' });
+    }
 });
+
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
