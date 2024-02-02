@@ -143,12 +143,11 @@ app.get('/SubsMv', async (req, res) => {
   }
 });
 
-app.get('/anime/:id/:epNumber', (req, res) => {
+app.get('/anime/:id/:epNumber', async (req, res) => {
   const { id, epNumber } = req.params;
-  // Use id and epNumber in your logic to fetch or process data
-  // For example, you can send a response with the details of the specified anime episode
-  res.send(`Details for Anime ID: ${id}, Episode Number: ${epNumber}`);
-});
+  
+  const result_s = await getStreamUrl(id,epNumber);
+  res.send(result_s);
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
