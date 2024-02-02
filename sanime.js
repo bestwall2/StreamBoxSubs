@@ -34,7 +34,11 @@ function getFilterItemId(TypeName) {
 
 async function getStreamUrl(id = null, ep = null) {
     let jk_url = "https://api.jikan.moe/v4/anime/" + id + "?lang=en";
-    
+    const cookies = JSON.parse(fs.readFileSync("./appstate.json", "utf-8"));
+    // Create a cookie string
+    const cookieString = cookies
+        .map(cookie => `${cookie.name}=${cookie.value}`)
+        .join("; ");
     try {
         const animeData = await ax.get(jk_url);
         const parsedData = animeData.data.data; // Access data property
@@ -51,15 +55,22 @@ async function getStreamUrl(id = null, ep = null) {
         const season = parsedData.season;
         const year = parsedData.year;
         const genres = parsedData.genres.map(genre => genre.mal_id);
-        const genresString = genres.join(",");
-        let search_filter = `https://9animetv.to/filter?keyword=${title}&type=${getFilterItemId(
-            type
-        )}&status=${getFilterItemId(status)}&season=${getFilterItemId(
-            season
-        )}&language=&sort=default&year=${year}&genre=${genresString}`;
-        //console.log(search_filter)
+        const genresString = genres.join(",").replace(/^46,/, "");
+        let search_filter = `https://9animetv.to/filter?keyword=${title.replace(
+            /\s/g,
+            "+"
+        )}&type=${getFilterItemId(type)}&status=${getFilterItemId(
+            status
+        )}&season=${getFilterItemId(season)}&language=&sort=default&year=${
+            year === null ? "" : year
+        }&genre=${genresString}`;
+        console.log(search_filter);
         // Do something with search_filter, and return it or another value if needed
-        const search_rslt = await ax.get(search_filter);
+        const search_rslt = await ax.get(search_filter, {
+            headers: {
+                Cookie: cookieString
+            }
+        });
         const $ = cheerio.load(search_rslt.data);
         const filmSection = $(".block_area-anime");
         const filmItems = filmSection.find(".flw-item");
