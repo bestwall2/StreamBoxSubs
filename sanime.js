@@ -34,7 +34,7 @@ function getFilterItemId(TypeName) {
 
 async function getStreamUrl(id = null, ep = null) {
     let jk_url = "https://api.jikan.moe/v4/anime/" + id + "?lang=en";
-    
+
     try {
         const animeData = await ax.get(jk_url);
         const parsedData = animeData.data.data; // Access data property
@@ -60,7 +60,7 @@ async function getStreamUrl(id = null, ep = null) {
         )}&season=${getFilterItemId(season)}&language=&sort=default&year=${
             year === null ? "" : year
         }&genre=${genresString}`;
-        console.log(search_filter);
+
         // Do something with search_filter, and return it or another value if needed
         const search_rslt = await ax.get(search_filter);
         const $ = cheerio.load(search_rslt.data);
@@ -74,7 +74,9 @@ async function getStreamUrl(id = null, ep = null) {
                 return { href, title, id };
             })
             .get();
-
+        if (filmData.length === 0) {
+            return null;
+        }
         let eps_url = `https://9animetv.to/ajax/episode/list/${filmData[0].id}`;
         const response = await ax.get(eps_url);
         const parsedData2 = response.data;
@@ -88,7 +90,9 @@ async function getStreamUrl(id = null, ep = null) {
                 return href;
             })
             .get();
-
+        if (hrefs.length === 0) {
+            return null;
+        }
         return hrefs[ep - 1];
     } catch (error) {
         console.error("Error:", error.message);
