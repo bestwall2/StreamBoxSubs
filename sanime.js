@@ -100,4 +100,7 @@ async function getStreamUrl(id = null, ep = null) {
     }
 }
 
+async function KDramaStream(tmdbid=null,se=null,ep=null){
+
+}
 module.exports = { getStreamUrl };
