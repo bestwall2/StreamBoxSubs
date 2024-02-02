@@ -1,5 +1,6 @@
 const express = require('express');
-const { searchForSubM, searchForSubTv, DownloadByPath} = require('./SubTools'); // Assuming you have the searchForSubM module
+const { searchForSubM, searchForSubTv, DownloadByPath} = require('./SubTools');
+const { getStreamUrl } = require('./sanime.js')
 const sanitizeFilename = require('sanitize-filename'); 
 const app = express();
 const port = 3000;
@@ -142,7 +143,12 @@ app.get('/SubsMv', async (req, res) => {
   }
 });
 
-// ... (existing code)
+app.get('/anime/:id/:epNumber', (req, res) => {
+  const { id, epNumber } = req.params;
+  // Use id and epNumber in your logic to fetch or process data
+  // For example, you can send a response with the details of the specified anime episode
+  res.send(`Details for Anime ID: ${id}, Episode Number: ${epNumber}`);
+});
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
