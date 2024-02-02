@@ -34,11 +34,7 @@ function getFilterItemId(TypeName) {
 
 async function getStreamUrl(id = null, ep = null) {
     let jk_url = "https://api.jikan.moe/v4/anime/" + id + "?lang=en";
-    const cookies = JSON.parse(fs.readFileSync("./appstate.json", "utf-8"));
-    // Create a cookie string
-    const cookieString = cookies
-        .map(cookie => `${cookie.name}=${cookie.value}`)
-        .join("; ");
+    
     try {
         const animeData = await ax.get(jk_url);
         const parsedData = animeData.data.data; // Access data property
@@ -63,11 +59,7 @@ async function getStreamUrl(id = null, ep = null) {
         )}&language=&sort=default&year=${year}&genre=${genresString}`;
         //console.log(search_filter)
         // Do something with search_filter, and return it or another value if needed
-        const search_rslt = await ax.get(search_filter, {
-            headers: {
-                Cookie: cookieString
-            }
-        });
+        const search_rslt = await ax.get(search_filter);
         const $ = cheerio.load(search_rslt.data);
         const filmSection = $(".block_area-anime");
         const filmItems = filmSection.find(".flw-item");
