@@ -3,7 +3,7 @@ const cheerio = require("cheerio");
 const fs = require("fs");
 
 function getFilterItemId(TypeName) {
-    const lowerCaseTypeName = TypeName.toLowerCase();
+    const lowerCaseTypeName = TypeName === null ? "" : TypeName.toLowerCase();
     if (lowerCaseTypeName.includes("tv")) {
         return 2;
     } else if (lowerCaseTypeName.includes("movie")) {
