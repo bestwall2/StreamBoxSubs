@@ -148,7 +148,7 @@ app.get('/anime/:id/:epNumber', async (req, res) => {
   
   const result_s = await getStreamUrl(id,epNumber);
   res.send(result_s);
-
+});
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
