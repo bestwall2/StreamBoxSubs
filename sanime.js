@@ -1,0 +1,104 @@
+const ax = require("axios");
+const cheerio = require("cheerio");
+const fs = require("fs");
+
+function getFilterItemId(TypeName) {
+    const lowerCaseTypeName = TypeName.toLowerCase();
+    if (lowerCaseTypeName.includes("tv")) {
+        return 2;
+    } else if (lowerCaseTypeName.includes("movie")) {
+        return 1;
+    } else if (lowerCaseTypeName.includes("ova")) {
+        return 3;
+    } else if (lowerCaseTypeName.includes("ona")) {
+        return 4;
+    } else if (lowerCaseTypeName.includes("finished")) {
+        return 1;
+    } else if (lowerCaseTypeName.includes("currently")) {
+        return 2;
+    } else if (lowerCaseTypeName.includes("not")) {
+        return 3;
+    } else if (lowerCaseTypeName.includes("spring")) {
+        return 1;
+    } else if (lowerCaseTypeName.includes("summer")) {
+        return 2;
+    } else if (lowerCaseTypeName.includes("fall")) {
+        return 3;
+    } else if (lowerCaseTypeName.includes("winter")) {
+        return 4;
+    } else {
+        // Handle other cases or return a default value
+        return "";
+    }
+}
+
+async function getStreamUrl(id = null, ep = null) {
+    let jk_url = "https://api.jikan.moe/v4/anime/" + id + "?lang=en";
+    const cookies = JSON.parse(fs.readFileSync("./appstate.json", "utf-8"));
+    // Create a cookie string
+    const cookieString = cookies
+        .map(cookie => `${cookie.name}=${cookie.value}`)
+        .join("; ");
+    try {
+        const animeData = await ax.get(jk_url);
+        const parsedData = animeData.data.data; // Access data property
+
+        if (!parsedData.genres || !Array.isArray(parsedData.genres)) {
+            console.error("Error: Invalid or missing genres data");
+            return "Error: Invalid or missing genres data";
+        }
+
+        const title = parsedData.title;
+        const titles = parsedData.titles;
+        const type = parsedData.type;
+        const status = parsedData.status;
+        const season = parsedData.season;
+        const year = parsedData.year;
+        const genres = parsedData.genres.map(genre => genre.mal_id);
+        const genresString = genres.join(",");
+        let search_filter = `https://9animetv.to/filter?keyword=${title}&type=${getFilterItemId(
+            type
+        )}&status=${getFilterItemId(status)}&season=${getFilterItemId(
+            season
+        )}&language=&sort=default&year=${year}&genre=${genresString}`;
+        //console.log(search_filter)
+        // Do something with search_filter, and return it or another value if needed
+        const search_rslt = await ax.get(search_filter, {
+            headers: {
+                Cookie: cookieString
+            }
+        });
+        const $ = cheerio.load(search_rslt.data);
+        const filmSection = $(".block_area-anime");
+        const filmItems = filmSection.find(".flw-item");
+        const filmData = filmItems
+            .map((index, element) => {
+                const href = $(element).find(".film-name a").attr("href");
+                const title = $(element).find(".film-name a").text();
+                const id = $(element).attr("data-id");
+                return { href, title, id };
+            })
+            .get();
+
+        let eps_url = `https://9animetv.to/ajax/episode/list/${filmData[0].id}`;
+        const response = await ax.get(eps_url);
+        const parsedData2 = response.data;
+        //console.log(parsedData2.html);
+        // Do not parse again if it's already an object
+        const $$ = cheerio.load(parsedData2.html);
+
+        const hrefs = $$(".episodes-ul a.ep-item")
+            .map((index, element) => {
+                const href = $$(element).attr("href");
+                return href;
+            })
+            .get();
+
+        return hrefs[ep - 1];
+    } catch (error) {
+        console.error("Error:", error.message);
+        return "Error:" + error.message;
+    }
+}
+
+module.exports = { getStreamUrl };
