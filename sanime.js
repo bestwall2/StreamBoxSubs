@@ -51,7 +51,7 @@ async function getStreamUrl(id = null, ep = null) {
         const season = parsedData.season;
         const year = parsedData.year;
         const filteredGenres = parsedData.genres.filter(genre => parseInt(genre.mal_id) < 46).map(genre => genre.mal_id);
-        const genresString = genres.join(",");
+        const genresString = filteredGenres.join(",");
         let search_filter = `https://9animetv.to/filter?keyword=${eng_title.replace(
             /\s/g,
             "+"
