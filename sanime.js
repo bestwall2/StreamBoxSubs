@@ -77,13 +77,7 @@ async function getStreamUrl(id = null, ep = null) {
             })
             .get();
         if (filmData.length === 0) {
-            const filmItemsArray = filmItems.toArray();
-
-            // Convert the array to a string
-            const filmItemsString = JSON.stringify(filmItemsArray);
-
-            // Return the string representation of filmItems
-            return filmItemsString + "test";
+          return search_rslt.data ;
         }
         let eps_url = `https://9animetv.to/ajax/episode/list/${filmData[0].id}`;
         const response = await ax.get(eps_url);
