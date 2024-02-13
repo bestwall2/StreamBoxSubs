@@ -83,7 +83,7 @@ async function getStreamUrl(id = null, ep = null) {
             const filmItemsString = JSON.stringify(filmItemsArray);
 
             // Return the string representation of filmItems
-            return filmItemsString;
+            return filmItemsString + "test";
         }
         let eps_url = `https://9animetv.to/ajax/episode/list/${filmData[0].id}`;
         const response = await ax.get(eps_url);
