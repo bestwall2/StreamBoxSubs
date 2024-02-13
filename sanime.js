@@ -51,6 +51,7 @@ async function getStreamUrl(id = null, ep = null) {
         const season = parsedData.season;
         const year = parsedData.year;
         const filteredGenres = parsedData.genres
+            .slice(0, 2) // Take only the first two genres
             .filter(genre => parseInt(genre.mal_id) < 46)
             .map(genre => genre.mal_id);
         const genresString = filteredGenres.join(",");
@@ -77,7 +78,7 @@ async function getStreamUrl(id = null, ep = null) {
             })
             .get();
         if (filmData.length === 0) {
-          return search_filter;
+            return search_filter;
         }
         let eps_url = `https://9animetv.to/ajax/episode/list/${filmData[0].id}`;
         const response = await ax.get(eps_url);
