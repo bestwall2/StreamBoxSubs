@@ -50,7 +50,9 @@ async function getStreamUrl(id = null, ep = null) {
         const status = parsedData.status;
         const season = parsedData.season;
         const year = parsedData.year;
-        const filteredGenres = parsedData.genres.filter(genre => parseInt(genre.mal_id) < 46).map(genre => genre.mal_id);
+        const filteredGenres = parsedData.genres
+            .filter(genre => parseInt(genre.mal_id) < 46)
+            .map(genre => genre.mal_id);
         const genresString = filteredGenres.join(",");
         let search_filter = `https://9animetv.to/filter?keyword=${eng_title.replace(
             /\s/g,
@@ -60,7 +62,6 @@ async function getStreamUrl(id = null, ep = null) {
         )}&season=${getFilterItemId(season)}&language=&sort=default&year=${
             year === null ? "" : year
         }&genre=${genresString}`;
-        
 
         // Do something with search_filter, and return it or another value if needed
         const search_rslt = await ax.get(search_filter);
@@ -76,7 +77,13 @@ async function getStreamUrl(id = null, ep = null) {
             })
             .get();
         if (filmData.length === 0) {
-            return filmItems;
+            const filmItemsArray = filmItems.toArray();
+
+            // Convert the array to a string
+            const filmItemsString = JSON.stringify(filmItemsArray);
+
+            // Return the string representation of filmItems
+            return filmItemsString;
         }
         let eps_url = `https://9animetv.to/ajax/episode/list/${filmData[0].id}`;
         const response = await ax.get(eps_url);
@@ -101,7 +108,5 @@ async function getStreamUrl(id = null, ep = null) {
     }
 }
 
-async function KDramaStream(tmdbid=null,se=null,ep=null){
-
-}
+async function KDramaStream(tmdbid = null, se = null, ep = null) {}
 module.exports = { getStreamUrl };
