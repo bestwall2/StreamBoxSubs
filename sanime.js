@@ -60,6 +60,7 @@ async function getStreamUrl(id = null, ep = null) {
         )}&season=${getFilterItemId(season)}&language=&sort=default&year=${
             year === null ? "" : year
         }&genre=${genresString}`;
+        
 
         // Do something with search_filter, and return it or another value if needed
         const search_rslt = await ax.get(search_filter);
@@ -75,7 +76,7 @@ async function getStreamUrl(id = null, ep = null) {
             })
             .get();
         if (filmData.length === 0) {
-            return null;
+            return search_filter;
         }
         let eps_url = `https://9animetv.to/ajax/episode/list/${filmData[0].id}`;
         const response = await ax.get(eps_url);
