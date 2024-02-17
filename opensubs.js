@@ -14,20 +14,33 @@ function getSubText(url) {
       zlib.gunzip(body, (err, decompressed) => {
         if (err) return reject(err);
 
-        let decodedText = Buffer.from(decompressed);
+        try {
+          let decodedText = Buffer.from(decompressed);
 
-        if (!decodedText.includes("[Script Info]")) {
-          console.log("Subtitles are in UTF-8");
-          //decodedText = iconv.decode(Buffer.from(decompressed), encoding);
+          if (!decodedText.includes("[Script Info]")) {
+            console.log("Subtitles are in UTF-8");
+            decodedText = iconv.decode(Buffer.from(decompressed), encoding);
+          }
+
+          fs.writeFileSync(output, decodedText);
+          console.log(`File written with encoding: ${encoding}`);
+          resolve(decodedText.toString());
+        } catch (err) {
+          reject(err);
         }
-
-        fs.writeFileSync(output, decodedText);
-        console.log(`File written with encoding: ${encoding}`);
-        resolve(decodedText.toString());
       });
     });
   });
 }
+
+// Example usage:
+getSubText('https://example.com/subtitles.zip')
+  .then(subtitles => {
+    console.log('Subtitles retrieved successfully:', subtitles);
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
 
 function getTvSubs(imdbId, season, episode, sublanguageId) {
   const url = `https://rest.opensubtitles.org/search/episode-${episode}/imdbid-${imdbId}/season-${season}/sublanguageid-${sublanguageId}`;
