@@ -22,7 +22,7 @@ function getSubText(url) {
             decodedText = iconv.decode(Buffer.from(decompressed), encoding);
           }
 
-          fs.writeFileSync(output, decodedText);
+          //fs.writeFileSync(output, decodedText);
           console.log(`File written with encoding: ${encoding}`);
           resolve(decodedText.toString());
         } catch (err) {
