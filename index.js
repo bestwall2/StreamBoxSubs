@@ -96,7 +96,7 @@ app.get('/GetSubText', async (req, res) => {
         res.send(subtitleText);
     } catch (error) {
         console.error('Error downloading subtitles:', error.message);
-        return res.status(500).json({ error: 'Internal server error.' });
+        return res.status(500).json({ error: 'Internal server error.' + error.message});
     }
 });
 
