@@ -33,14 +33,7 @@ function getSubText(url) {
   });
 }
 
-// Example usage:
-getSubText('https://example.com/subtitles.zip')
-  .then(subtitles => {
-    console.log('Subtitles retrieved successfully:', subtitles);
-  })
-  .catch(error => {
-    console.error('Error:', error);
-  });
+
 
 function getTvSubs(imdbId, season, episode, sublanguageId) {
   const url = `https://rest.opensubtitles.org/search/episode-${episode}/imdbid-${imdbId}/season-${season}/sublanguageid-${sublanguageId}`;
