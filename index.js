@@ -81,6 +81,7 @@ app.get('/DownloadSub', async (req, res) => {
         return res.status(500).json({ error: 'Internal server error.' });
     }
 });
+
 app.get('/GetSubText', async (req, res) => {
     try {
         const { Url } = req.query;
@@ -90,16 +91,15 @@ app.get('/GetSubText', async (req, res) => {
         }
 
         const subtitleText = await getSubText(Url);
-        
-        //console.log(subtitleText)
+
         res.setHeader('Content-Type', 'text/plain; charset=utf-8');
         res.send(subtitleText);
-        
     } catch (error) {
         console.error('Error downloading subtitles:', error.message);
         return res.status(500).json({ error: 'Internal server error.' });
     }
 });
+
 
 app.get('/SubsTv', async (req, res) => {
   try {
