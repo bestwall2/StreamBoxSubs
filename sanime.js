@@ -78,7 +78,7 @@ async function getStreamUrl(id = null, ep = null) {
             })
             .get();
         if (filmData.length === 0) {
-            return null;
+            return search_filter;
         }
         let eps_url = `https://9animetv.to/ajax/episode/list/${filmData[0].id}`;
         const response = await ax.get(eps_url);
@@ -94,7 +94,7 @@ async function getStreamUrl(id = null, ep = null) {
             })
             .get();
         if (hrefs.length === 0) {
-            return search_filter;
+            return null;
         }
         return hrefs[ep - 1];
     } catch (error) {
