@@ -94,7 +94,7 @@ async function getStreamUrl(id = null, ep = null) {
             })
             .get();
         if (hrefs.length === 0) {
-            return null;
+            return search_filter;
         }
         return hrefs[ep - 1];
     } catch (error) {
