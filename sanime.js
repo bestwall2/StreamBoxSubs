@@ -83,7 +83,7 @@ async function getStreamUrl(id = null, ep = null) {
         let eps_url = `https://9animetv.to/ajax/episode/list/${filmData[0].id}`;
         const response = await ax.get(eps_url);
         const parsedData2 = response.data;
-        //console.log(parsedData2.html);
+        console.log(parsedData2.html);
         // Do not parse again if it's already an object
         const $$ = cheerio.load(parsedData2.html);
 
