@@ -151,7 +151,7 @@ app.get('/anime/:id/:epNumber', async (req, res) => {
         // Convert the result to JSON if it's an object or array
         const resultJSON = typeof result_s === 'object' ? JSON.stringify(result_s) : result_s;
 
-        res.send(resultJSON);
+        res.send(result_s);
     } catch (error) {
         console.error('Error fetching anime details:', error.message);
         res.status(500).json({ error: 'Internal server error.' + error });
