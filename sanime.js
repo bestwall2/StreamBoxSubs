@@ -1,8 +1,9 @@
-const axios = require("axios");
+const ax = require("axios");
 const cheerio = require("cheerio");
+const fs = require("fs");
 
-async function getFilterItemId(TypeName) {
-    const lowerCaseTypeName = TypeName ? TypeName.toLowerCase() : "";
+function getFilterItemId(TypeName) {
+    const lowerCaseTypeName = TypeName === null ? "" : TypeName.toLowerCase();
     if (lowerCaseTypeName.includes("tv")) {
         return 2;
     } else if (lowerCaseTypeName.includes("movie")) {
@@ -32,47 +33,75 @@ async function getFilterItemId(TypeName) {
 }
 
 async function getStreamUrl(id = null, ep = null) {
+    let jk_url = "https://api.jikan.moe/v4/anime/" + id + "?lang=en";
+
     try {
-        const jikanResponse = await axios.get(`https://api.jikan.moe/v4/anime/${id}?lang=en`);
-        const parsedData = jikanResponse.data.data;
+        const animeData = await ax.get(jk_url);
+        const parsedData = animeData.data.data; // Access data property
 
         if (!parsedData.genres || !Array.isArray(parsedData.genres)) {
-            throw new Error("Invalid or missing genres data");
+            console.error("Error: Invalid or missing genres data");
+            return "Error: Invalid or missing genres data";
         }
 
-        const engTitle = parsedData.title_english;
+        const title = parsedData.title;
+        const eng_title = parsedData.title_english;
         const type = parsedData.type;
         const status = parsedData.status;
         const season = parsedData.season;
         const year = parsedData.year;
-        const filteredGenres = parsedData.genres.slice(0, 2).filter(genre => parseInt(genre.mal_id) < 46).map(genre => genre.mal_id);
+        const filteredGenres = parsedData.genres
+            .slice(0, 2) // Take only the first two genres
+            .filter(genre => parseInt(genre.mal_id) < 46)
+            .map(genre => genre.mal_id);
         const genresString = filteredGenres.join(",");
+        let search_filter = `https://9animetv.to/filter?keyword=${eng_title.replace(
+            /\s/g,
+            "+"
+        )}&type=${getFilterItemId(type)}&status=${getFilterItemId(
+            status
+        )}&season=${getFilterItemId(season)}&language=&sort=default&year=${
+            year === null ? "" : year
+        }&genre=${genresString}`;
 
-        const searchFilter = `https://9animetv.to/filter?keyword=${encodeURIComponent(engTitle)}&type=${getFilterItemId(type)}&status=${getFilterItemId(status)}&season=${getFilterItemId(season)}&language=&sort=default&year=${year || ""}&genre=${genresString}`;
-
-        const searchResult = await axios.get(searchFilter);
-        const $ = cheerio.load(searchResult.data);
-        const filmItems = $(".block_area-anime .flw-item");
-        
-        if (filmItems.length === 0) {
+        // Do something with search_filter, and return it or another value if needed
+        const search_rslt = await ax.get(search_filter);
+        const $ = cheerio.load(search_rslt.data);
+        const filmSection = $(".block_area-anime");
+        const filmItems = filmSection.find(".flw-item");
+        const filmData = filmItems
+            .map((index, element) => {
+                const href = $(element).find(".film-name a").attr("href");
+                const title = $(element).find(".film-name a").text();
+                const id = $(element).attr("data-id");
+                return { href, title, id };
+            })
+            .get();
+        if (filmData.length === 0) {
             return null;
         }
+        let eps_url = `https://9animetv.to/ajax/episode/list/${filmData[0].id}`;
+        const response = await ax.get(eps_url);
+        const parsedData2 = response.data;
+        console.log(parsedData2.html);
+        // Do not parse again if it's already an object
+        const $$ = cheerio.load(parsedData2.html);
 
-        const firstFilmId = filmItems.first().attr("data-id");
-        const epsUrl = `https://9animetv.to/ajax/episode/list/${firstFilmId}`;
-        const epsResponse = await axios.get(epsUrl);
-        const $$ = cheerio.load(epsResponse.data.html);
-        const hrefs = $$(".episodes-ul a.ep-item").map((index, element) => $$(element).attr("href")).get();
-
+        const hrefs = $$(".episodes-ul a.ep-item")
+            .map((index, element) => {
+                const href = $$(element).attr("href");
+                return href;
+            })
+            .get();
         if (hrefs.length === 0) {
             return null;
         }
-
         return hrefs[ep - 1];
     } catch (error) {
         console.error("Error:", error.message);
-        return `Error: ${error.message}`;
+        return "Error:" + error.message;
     }
 }
 
+async function KDramaStream(tmdbid = null, se = null, ep = null) {}
 module.exports = { getStreamUrl };
