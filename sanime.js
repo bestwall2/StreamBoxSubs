@@ -1,69 +1,8 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 
-async function getStreamUrl(id = null, ep = null) {
-    const jk_url = "https://api.jikan.moe/v4/anime/" + id + "?lang=en";
-    
-    try {
-        const animeData = await axios.get(jk_url);
-        const parsedData = animeData.data.data;
-
-        if (!parsedData.genres || !Array.isArray(parsedData.genres)) {
-            throw new Error("Invalid or missing genres data");
-        }
-
-        const title = parsedData.title;
-        const eng_title = parsedData.title_english;
-        const type = parsedData.type;
-        const status = parsedData.status;
-        const season = parsedData.season;
-        const year = parsedData.year;
-        const filteredGenres = parsedData.genres
-            .slice(0, 2)
-            .filter(genre => parseInt(genre.mal_id) < 46)
-            .map(genre => genre.mal_id);
-        const genresString = filteredGenres.join(",");
-        const search_filter = `https://9animetv.to/filter?keyword=${encodeURIComponent(eng_title)}&type=${getFilterItemId(type)}&status=${getFilterItemId(status)}&season=${getFilterItemId(season)}&language=&sort=default&year=${year === null ? "" : year}&genre=${genresString}`;
-
-        const search_rslt = await axios.get(search_filter);
-        const $ = cheerio.load(search_rslt.data);
-        const filmSection = $(".block_area-anime");
-        const filmItems = filmSection.find(".flw-item");
-        const filmData = filmItems
-            .map((index, element) => {
-                const href = $(element).find(".film-name a").attr("href");
-                const title = $(element).find(".film-name a").text();
-                const id = $(element).attr("data-id");
-                return { href, title, id };
-            })
-            .get();
-
-        if (filmData.length === 0) {
-            throw new Error("No anime found");
-        }
-
-        const eps_url = `https://9animetv.to/ajax/episode/list/${filmData[0].id}`;
-        const response = await axios.get(eps_url);
-        const parsedData2 = response.data;
-        const $$ = cheerio.load(parsedData2.html);
-
-        const hrefs = $$(".episodes-ul a.ep-item")
-            .map((index, element) => $$(element).attr("href"))
-            .get();
-
-        if (hrefs.length === 0) {
-            throw new Error("No episodes found");
-        }
-
-        return hrefs[ep - 1];
-    } catch (error) {
-        console.error("Error:", error.message);
-        return "Error: " + error.message;
-    }
-}
-
-function getFilterItemId(TypeName) {
-    const lowerCaseTypeName = TypeName === null ? "" : TypeName.toLowerCase();
+async function getFilterItemId(TypeName) {
+    const lowerCaseTypeName = TypeName ? TypeName.toLowerCase() : "";
     if (lowerCaseTypeName.includes("tv")) {
         return 2;
     } else if (lowerCaseTypeName.includes("movie")) {
@@ -87,7 +26,52 @@ function getFilterItemId(TypeName) {
     } else if (lowerCaseTypeName.includes("winter")) {
         return 4;
     } else {
+        // Handle other cases or return a default value
         return "";
+    }
+}
+
+async function getStreamUrl(id = null, ep = null) {
+    try {
+        const jikanResponse = await axios.get(`https://api.jikan.moe/v4/anime/${id}?lang=en`);
+        const parsedData = jikanResponse.data.data;
+
+        if (!parsedData.genres || !Array.isArray(parsedData.genres)) {
+            throw new Error("Invalid or missing genres data");
+        }
+
+        const engTitle = parsedData.title_english;
+        const type = parsedData.type;
+        const status = parsedData.status;
+        const season = parsedData.season;
+        const year = parsedData.year;
+        const filteredGenres = parsedData.genres.slice(0, 2).filter(genre => parseInt(genre.mal_id) < 46).map(genre => genre.mal_id);
+        const genresString = filteredGenres.join(",");
+
+        const searchFilter = `https://9animetv.to/filter?keyword=${encodeURIComponent(engTitle)}&type=${getFilterItemId(type)}&status=${getFilterItemId(status)}&season=${getFilterItemId(season)}&language=&sort=default&year=${year || ""}&genre=${genresString}`;
+
+        const searchResult = await axios.get(searchFilter);
+        const $ = cheerio.load(searchResult.data);
+        const filmItems = $(".block_area-anime .flw-item");
+        
+        if (filmItems.length === 0) {
+            return null;
+        }
+
+        const firstFilmId = filmItems.first().attr("data-id");
+        const epsUrl = `https://9animetv.to/ajax/episode/list/${firstFilmId}`;
+        const epsResponse = await axios.get(epsUrl);
+        const $$ = cheerio.load(epsResponse.data.html);
+        const hrefs = $$(".episodes-ul a.ep-item").map((index, element) => $$(element).attr("href")).get();
+
+        if (hrefs.length === 0) {
+            return null;
+        }
+
+        return hrefs[ep - 1];
+    } catch (error) {
+        console.error("Error:", error.message);
+        return `Error: ${error.message}`;
     }
 }
 
