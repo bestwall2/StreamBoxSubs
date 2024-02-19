@@ -16,11 +16,11 @@ function getSubText(url) {
 
         try {
           let decodedText = Buffer.from(decompressed);
-
+          /*
           if (!decodedText.includes("[Script Info]")) {
             console.log("Subtitles are in UTF-8");
             decodedText = iconv.decode(Buffer.from(decompressed), encoding);
-          }
+          }*/
 
           //fs.writeFileSync(output, decodedText);
           console.log(`File written with encoding: ${encoding}`);
