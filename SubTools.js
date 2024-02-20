@@ -220,7 +220,7 @@ async function AnimeSub(id = null, ep = null, lang = "arabic") {
     );
     const LANG_SUBS = ALL_LANG_SUBS[lang] || [];
     let LANG_SUBS_FILTERED;
-    if (ep.includes("0000")) {
+    if (ep.includes("null")) {
         LANG_SUBS_FILTERED = LANG_SUBS;
     } else {
         LANG_SUBS_FILTERED = LANG_SUBS.filter(item => {
