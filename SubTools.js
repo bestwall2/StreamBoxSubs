@@ -1,5 +1,8 @@
 const subscene = require("node-subscene-api");
 const fs = require("fs").promises;
+const axios = require("axios");
+const cheerio = require("cheerio");
+const { getFilterItemId } = require('./sanime.js');
 
 async function searchForSubM(q, year, lang) {
   try {
@@ -98,23 +101,30 @@ function numberToOrdinalWord(number) {
     }
 }
 
-
-
 async function DownloadByPath(path) {
-  try {
-    const files = await subscene.download(path, { zip: false });
+    try {
+        const files = await subscene.download(path, { zip: false });
 
-    // Assuming you want to return the content of the first subtitle
-    if (files.length > 0) {
-      const subtitleText = files[0].file.toString("utf-8"); // Specify utf-8 encoding
-      return subtitleText;
-    } else {
-      return "Error No subtitles found for the specified path.";
+        // Check if files array is not empty
+        if (files.length > 0) {
+            if (files.length === 1) {
+                // If there is only one file, return its content
+                const subtitleText = files[0].file.toString("utf-8"); // Specify utf-8 encoding
+                return subtitleText;
+            } else {
+                // If there are multiple files, select the last one
+                const lastSubtitle = files[files.length - 1].file.toString("utf-8"); // Specify utf-8 encoding
+                return lastSubtitle;
+            }
+        } else {
+            return "Error: No subtitles found for the specified path.";
+        }
+    } catch (error) {
+        console.error("Error downloading subtitles:", error.message);
+        throw error; // Re-throw the error if needed
     }
-  } catch (error) {
-    console.error("Error downloading subtitles:", error.message);
-    throw error; // Re-throw the error if needed
-  }
 }
-//console.log(numberToOrdinalWord(21).replace("Secondnd","Second"));
+async function AnimeSub(id=null,ep=null){
+  
+}
 module.exports = { searchForSubM, DownloadByPath, searchForSubTv };
