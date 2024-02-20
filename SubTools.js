@@ -219,12 +219,17 @@ async function AnimeSub(id = null, ep = null, lang = "arabic") {
         {}
     );
     const LANG_SUBS = ALL_LANG_SUBS[lang] || [];
-    const LANG_SUBS_FILTERED = LANG_SUBS.filter(item => {
-        // Extract episode number from the subtitle title
-        const subtitleEpNumber = extractEpisodeNumber(item.title);
-        // Compare episode numbers and return true if they match
-        return subtitleEpNumber === ep;
-    });
+    let LANG_SUBS_FILTERED;
+    if (ep.includes("?")) {
+        LANG_SUBS_FILTERED = LANG_SUBS;
+    } else {
+        LANG_SUBS_FILTERED = LANG_SUBS.filter(item => {
+            // Extract episode number from the subtitle title
+            const subtitleEpNumber = extractEpisodeNumber(item.title);
+            // Compare episode numbers and return true if they match
+            return subtitleEpNumber === ep;
+        });
+    }
     const JsStyling = LANG_SUBS_FILTERED.map(item => ({
         FileName: item.title,
         SubFormat: "srt",
