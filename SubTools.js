@@ -299,4 +299,4 @@ async function getItemTitle(id = null) {
     }
 }
 
-module.exports = { searchForSubM, DownloadByPath, searchForSubTv };
+module.exports = { searchForSubM, DownloadByPath, searchForSubTv , AnimeSub};
