@@ -1,5 +1,5 @@
 const express = require('express');
-const { searchForSubM, searchForSubTv, DownloadByPath } = require('./SubTools');
+const { searchForSubM, searchForSubTv, DownloadByPath , AnimeSub} = require('./SubTools');
 const { getStreamUrl } = require('./sanime.js');
 const sanitizeFilename = require('sanitize-filename');
 const { getSubText, getTvSubs, getMovSubs } = require('./opensubs');
@@ -131,6 +131,18 @@ app.get('/anime/:id/:epNumber', async (req, res) => {
   try {
     const { id, epNumber } = req.params;
     const result_s = await getStreamUrl(id, epNumber);
+    const resultJSON = typeof result_s === 'object' ? JSON.stringify(result_s) : result_s;
+    res.send(resultJSON);
+  } catch (error) {
+    console.error('Error fetching anime details:', error.message);
+    res.status(500).json({ error: 'Internal server error.' + error });
+  }
+});
+
+app.get('/subs/anime/:id/:epNumber/:lang', async (req, res) => {
+  try {
+    const { id, epNumber , lang } = req.params;
+    const result_s = await AnimeSub(id, epNumber,lang);
     const resultJSON = typeof result_s === 'object' ? JSON.stringify(result_s) : result_s;
     res.send(resultJSON);
   } catch (error) {
