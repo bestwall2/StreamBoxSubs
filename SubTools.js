@@ -190,7 +190,7 @@ async function DownloadByPath(path) {
         throw error; // Re-throw the error if needed
     }
 }
-async function AnimeSub(id = null, ep = null , lang="arabic") {
+async function AnimeSub(id = null, ep = null, lang = "arabic") {
     const query = await getItemTitle(id);
     const words = query[0].split(" ");
     const firstTwoWords =
@@ -213,7 +213,7 @@ async function AnimeSub(id = null, ep = null , lang="arabic") {
         const yearB = getYearFromTitle(b.title);
         return yearB - yearA; // Sort in descending order (latest year first)
     });
-    
+
     const ALL_LANG_SUBS = await subscene.getSubtitles(
         filteredResult[0].path,
         {}
@@ -225,8 +225,12 @@ async function AnimeSub(id = null, ep = null , lang="arabic") {
         // Compare episode numbers and return true if they match
         return subtitleEpNumber === ep;
     });
-    
-    return LANG_SUBS_FILTERED;
+    const JsStyling = LANG_SUBS_FILTERED.map(item => ({
+        FileName: item.title,
+        SubFormat: "",
+        SubDownloadLink: item.path
+    }));
+    return JsStyling;
 }
 
 function getYearFromTitle(title) {
@@ -299,4 +303,4 @@ async function getItemTitle(id = null) {
     }
 }
 
-module.exports = { searchForSubM, DownloadByPath, searchForSubTv , AnimeSub};
+module.exports = { searchForSubM, DownloadByPath, searchForSubTv, AnimeSub };
