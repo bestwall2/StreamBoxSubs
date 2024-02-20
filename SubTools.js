@@ -227,7 +227,7 @@ async function AnimeSub(id = null, ep = null, lang = "arabic") {
     });
     const JsStyling = LANG_SUBS_FILTERED.map(item => ({
         FileName: item.title,
-        SubFormat: "",
+        SubFormat: "srt",
         SubDownloadLink: item.path
     }));
     return JsStyling;
