@@ -223,11 +223,13 @@ async function AnimeSub(id = null, ep = null, lang = "arabic") {
     if (ep.includes("null")) {
         LANG_SUBS_FILTERED = LANG_SUBS;
     } else {
+ 
+      let paddedNumber = ep.padStart(2, '0'); // Result: "05"
         LANG_SUBS_FILTERED = LANG_SUBS.filter(item => {
             // Extract episode number from the subtitle title
             const subtitleEpNumber = extractEpisodeNumber(item.title);
             // Compare episode numbers and return true if they match
-            return subtitleEpNumber === ep;
+            return subtitleEpNumber === paddedNumber;
         });
     }
     const JsStyling = LANG_SUBS_FILTERED.map(item => ({
