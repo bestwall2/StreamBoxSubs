@@ -17,7 +17,7 @@ function getSubText(url) {
         try {
           let decodedText = Buffer.from(decompressed);
           
-          if (!decodedText.includes("�����")) {
+          if (decodedText.includes("���")) {
             console.log("Subtitles are in UTF-8");
             decodedText = iconv.decode(Buffer.from(decompressed), encoding);
           }
