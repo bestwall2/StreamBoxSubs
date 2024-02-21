@@ -232,7 +232,7 @@ async function AnimeSub(id = null, ep = null, lang = "arabic") {
             return subtitleEpNumber === paddedNumber;
         });
     }
-    const JsStyling = LANG_SUBS_FILTERED.map(item => ({
+    const JsStyling = LANG_SUBS.map(item => ({
         FileName: item.title,
         SubFormat: "srt",
         SubDownloadLink: item.path
