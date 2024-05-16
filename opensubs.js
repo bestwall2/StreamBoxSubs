@@ -3,6 +3,16 @@ const fs = require("fs");
 const zlib = require("zlib");
 const iconv = require("iconv-lite");
 
+function isUtf8(buffer) {
+  // Check if buffer is valid UTF-8
+  try {
+    return Buffer.from(buffer).toString('utf8').indexOf('\ufffd') === -1;
+  } catch (e) {
+    return false;
+  }
+}
+
+
 function getSubText(url) {
   const output = "myfileofsub.txt";
   const encoding = "windows-1256";
