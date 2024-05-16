@@ -15,16 +15,19 @@ function getSubText(url) {
         if (err) return reject(err);
 
         try {
-          let decodedText = Buffer.from(decompressed);
-          
-          if (!decodedText.includes("")) {
-          //  console.log("Subtitles are in UTF-8");
-            decodedText = iconv.decode(Buffer.from(decompressed), encoding);
+          let decodedText = decompressed;
+
+          if (!isUtf8(decompressed)) {
+            // Convert using iconv if not UTF-8
+            decodedText = iconv.decode(decompressed, encoding);
+            console.log(`File written with encoding: ${encoding}`);
+          } else {
+            decodedText = decompressed.toString('utf8');
+            console.log("File written with encoding: UTF-8");
           }
 
           //fs.writeFileSync(output, decodedText);
-          console.log(`File written with encoding: ${encoding}`);
-          resolve(decodedText.toString());
+          resolve(decodedText);
         } catch (err) {
           reject(err);
         }
