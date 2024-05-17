@@ -20,7 +20,7 @@ app.use((err, req, res, next) => {
 
 // Define route for the root URL
 app.get('/:resource/:id', (req, res) => {
-  const { resource, id } = req.query;
+  const { resource, id } = req.params;
   res.sendFile(path.join(__dirname, 'public', 'player.html'));
 });
 
