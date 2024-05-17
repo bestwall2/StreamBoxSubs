@@ -18,10 +18,12 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal server error.' });
 });
 
-// Route to search for movie subtitles
-app.get('/', (req, res) => {
+// Define route for the root URL
+app.get('/:resource/:id', (req, res) => {
+  const { resource, id } = req.query;
   res.sendFile(path.join(__dirname, 'public', 'player.html'));
 });
+
 
 app.get('/SearchSubMv', async (req, res) => {
   try {
