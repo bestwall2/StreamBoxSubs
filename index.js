@@ -20,7 +20,8 @@ app.use((err, req, res, next) => {
 
 // Route to search for movie subtitles
 app.get('/', (req, res) => {
-  res.sendFile("./index.html")
+  const filePath = path.join(__dirname, 'index.html');
+  res.sendFile(filePath);
 });
 
 app.get('/SearchSubMv', async (req, res) => {
