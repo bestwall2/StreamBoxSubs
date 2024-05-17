@@ -21,7 +21,30 @@
 </head>
 <body>
     <div class="video-container">
-        <iframe src="https://moviesapi.club/tv/200709-1-2" width="100%" height="100%" style="border:none;" allow="autoplay; fullscreen"></iframe>
+        <iframe id="videoPlayer" width="100%" height="100%" style="border:none;" allow="autoplay; fullscreen"></iframe>
     </div>
+
+    <script>
+        // Function to get URL parameters
+        function getUrlParameter(name) {
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(window.location.href);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+
+        // Get the resource and id parameters from the URL
+        var resource = getUrlParameter('resource');
+        var id = getUrlParameter('id');
+
+        // Set the src attribute of the iframe with the resource and id
+        var videoPlayer = document.getElementById('videoPlayer');
+        videoPlayer.src = "https://moviesapi.club/" + resource + "/" + id;
+
+        // Optional: Add other attributes if needed (e.g., allow="autoplay; fullscreen")
+        // videoPlayer.allow = "autoplay; fullscreen";
+    </script>
 </body>
 </html>
