@@ -41,8 +41,14 @@
 
         // Set the src attribute of the iframe with the resource and id
         var videoPlayer = document.getElementById('videoPlayer');
-        videoPlayer.src = "https://moviesapi.club/" + resource + "/" + id;
 
+        if (resource && id) {
+            videoPlayer.src = "https://moviesapi.club/" + resource + "/" + id;
+        } else {
+            console.error('Resource and/or id parameters are missing.');
+            // Optionally handle the case where parameters are missing
+        }
+        
         // Optional: Add other attributes if needed (e.g., allow="autoplay; fullscreen")
         // videoPlayer.allow = "autoplay; fullscreen";
     </script>
