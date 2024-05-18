@@ -83,7 +83,7 @@ function getTvSubs(imdbId, season, episode, sublanguageId) {
   });
 }
 
-function getMovSubs(imdbId, sublanguageId="en") {
+function getMovSubs(imdbId, sublanguageId="eng") {
   const url = `https://rest.opensubtitles.org/search/imdbid-${imdbId}/sublanguageid-eng`;
   const headers = {
     "x-user-agent": "trailers.to-UA",
