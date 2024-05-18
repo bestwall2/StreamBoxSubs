@@ -18,11 +18,16 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal server error.' });
 });
 
-// Define route for the root URL
-app.get('/:resource/:id', (req, res) => {
-  const { resource, id } = req.params;
-  res.sendFile(path.join(__dirname, 'public', 'player.html'));
+app.get('/', (req, res) => {
+  const { resource, id } = req.query;
+  if (resource && id) {
+    res.sendFile(path.join(__dirname, 'public', 'player.html'));
+  } else {
+    res.status(400).send('Bad Request: resource and id query parameters are required');
+  }
 });
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.get('/SearchSubMv', async (req, res) => {
