@@ -30,14 +30,14 @@
             name = name.replace(/[\[\]]/g, "\\$&");
             var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
                 results = regex.exec(window.location.href);
-            if (!results) return null;
-            if (!results[2]) return '';
-            return decodeURIComponent(results[2].replace(/\+/g, " "));
+            if (!results) return null; // If the parameter is not found
+            if (!results[2]) return ''; // If the parameter has no value
+            return decodeURIComponent(results[2].replace(/\+/g, " ")); // Return decoded parameter value
         }
 
         // Get the resource and id parameters from the URL
-        var resource = getUrlParameter('resource');
-        var id = getUrlParameter('id');
+        var resource = getUrlParameter('resource'); // e.g., "tv"
+        var id = getUrlParameter('id'); // e.g., "1127087-1-1"
 
         // Set the src attribute of the iframe with the resource and id
         var videoPlayer = document.getElementById('videoPlayer');
