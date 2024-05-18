@@ -48,7 +48,7 @@ function getSubText(url) {
 
 
 
-function getTvSubs(imdbId, season, episode, sublanguageId) {
+function getTvSubs(imdbId, season, episode, sublanguageId="eng") {
   const url = `https://rest.opensubtitles.org/search/episode-${episode}/imdbid-${imdbId}/season-${season}/sublanguageid-${sublanguageId}`;
   const headers = {
     "x-user-agent": "trailers.to-UA",
@@ -84,7 +84,7 @@ function getTvSubs(imdbId, season, episode, sublanguageId) {
 }
 
 function getMovSubs(imdbId, sublanguageId="eng") {
-  const url = `https://rest.opensubtitles.org/search/imdbid-${imdbId}/sublanguageid-eng`;
+  const url = `https://rest.opensubtitles.org/search/imdbid-${imdbId}/sublanguageid-${sublanguageId}`;
   const headers = {
     "x-user-agent": "trailers.to-UA",
     "content-type": "application/x-www-form-urlencoded; charset=utf-8"
