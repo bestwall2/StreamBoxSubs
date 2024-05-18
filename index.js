@@ -1,10 +1,11 @@
 const express = require('express');
-const { searchForSubM, searchForSubTv, DownloadByPath , AnimeSub} = require('./SubTools');
+const { searchForSubM, searchForSubTv, DownloadByPath, AnimeSub } = require('./SubTools');
 const { getStreamUrl } = require('./sanime.js');
 const sanitizeFilename = require('sanitize-filename');
 const { getSubText, getTvSubs, getMovSubs } = require('./opensubs');
 const fs = require('fs').promises;
 const path = require('path');
+const morgan = require('morgan');
 
 const app = express();
 const port = 8000;
@@ -12,11 +13,11 @@ const port = 8000;
 // Middleware to parse JSON requests
 app.use(express.json());
 
-// Middleware for error handling
-app.use((err, req, res, next) => {
-  console.error('Error:', err.stack);
-  res.status(500).json({ error: 'Internal server error.' });
-});
+// Middleware for logging
+app.use(morgan('combined'));
+
+// Serve static files
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
   const { resource, id } = req.query;
@@ -26,9 +27,6 @@ app.get('/', (req, res) => {
     res.status(400).send('Bad Request: resource and id query parameters are required');
   }
 });
-
-app.use(express.static(path.join(__dirname, 'public')));
-
 
 app.get('/SearchSubMv', async (req, res) => {
   try {
@@ -149,13 +147,19 @@ app.get('/anime/:id/:epNumber', async (req, res) => {
 app.get('/subs/anime/:id/:epNumber/:lang', async (req, res) => {
   try {
     const { id, epNumber , lang } = req.params;
-    const result_s = await AnimeSub(id, epNumber,lang);
+    const result_s = await AnimeSub(id, epNumber, lang);
     const resultJSON = typeof result_s === 'object' ? JSON.stringify(result_s) : result_s;
     res.send(resultJSON);
   } catch (error) {
     console.error('Error fetching anime details:', error.message);
     res.status(500).json({ error: 'Internal server error.' + error });
   }
+});
+
+// Error Handling Middleware
+app.use((err, req, res, next) => {
+  console.error('Error:', err.stack);
+  res.status(500).json({ error: 'Internal server error.' });
 });
 
 app.listen(port, () => {
