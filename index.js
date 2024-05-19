@@ -21,7 +21,34 @@ app.use((err, req, res, next) => {
 app.get('/', (req, res) => {
   const { resource, id } = req.query;
   if (resource && id) {
-    res.sendFile(path.join(__dirname, 'public', 'player.html'));
+    const vidplay = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Player</title>
+    <style>
+        body, html {
+            margin: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        .video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <iframe src="https://moviesapi.club/${resource}/${id}" width="100%" height="100%" style="border:none;" allow="autoplay; fullscreen"></iframe>
+    </div>
+</body>
+</html>`
+    res.send(vidplay);
   } else {
     res.status(400).send('Bad Request: resource and id query parameters are required');
   }
