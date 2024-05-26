@@ -13,7 +13,8 @@ async function searchForSubM(q, year, lang) {
             const movieYear = match ? match[1] : null;
             return movieYear === year;
         });
-
+        
+        return filteredResult ;
        /* if (filteredResult) {
             const subtitles = await subscene.getSubtitles(
                 filteredResult.path,
