@@ -14,16 +14,17 @@ async function searchForSubM(q, year, lang) {
             return movieYear === year;
         });
 
-       // if (filteredResult) {
+       /* if (filteredResult) {
             const subtitles = await subscene.getSubtitles(
                 filteredResult.path,
                 {}
             );
             const subslang = subtitles[lang] || [];
             return subslang;
-       // } else {
-           // return "No matching movie found.";
-       // }
+        } else {
+            return "No matching movie found.";
+        }
+        */
     } catch (error) {
         console.error("Error fetching subtitles:", error.message);
         throw error; // Re-throw the error if needed
