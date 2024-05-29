@@ -1,9 +1,9 @@
 const axios = require('axios');
 const fs = require('fs');
-const { translate } = require('bing-translate-api');
+const { translate } = require('bing-translate-api').default;
 const subsrt = require('subsrt');
 
-async function translateAndSaveSubtitles(url, format, targetLang, batchSize = 5) {
+async function translateAndSaveSubtitles(url, format, targetLang) {
     try {
         // Fetch the subtitle content from the URL
         const response = await axios.get(url, { responseType: 'text' });
@@ -13,48 +13,76 @@ async function translateAndSaveSubtitles(url, format, targetLang, batchSize = 5)
         const options = { verbose: true };
         const jsonSubtitles = subsrt.parse(content, options);
 
-        // Split the subtitle lines into batches
-        const batches = [];
-        for (let i = 0; i < jsonSubtitles.length; i += batchSize) {
-            batches.push(jsonSubtitles.slice(i, i + batchSize));
-        }
+        // Group lines for translation ensuring each group is less than 999 characters
+        const translationGroups = groupLinesForTranslation(jsonSubtitles, 999);
 
-        // Translate each batch of lines concurrently
-        const translatedBatches = await Promise.all(batches.map(batch =>
-            translateBatch(batch, targetLang)
+        // Translate each group of lines
+        const translatedGroups = await Promise.all(translationGroups.map(group =>
+            translateText(group.join(' '), targetLang)
         ));
 
-        // Flatten the translated batches
-        const translatedTexts = translatedBatches.flat();
-
-        // Update the subtitle lines with the translated texts
-        for (let i = 0; i < jsonSubtitles.length; i++) {
-            jsonSubtitles[i].text = translatedTexts[i];
-            jsonSubtitles[i].content = translatedTexts[i];
+        // Reconstruct the translated lines into the original structure
+        let translatedIndex = 0;
+        for (const group of translationGroups) {
+            const translatedGroup = splitText(translatedGroups[translatedIndex], group.length);
+            for (let i = 0; i < group.length; i++) {
+                group[i].text = translatedGroup[i];
+                group[i].content = translatedGroup[i];
+            }
+            translatedIndex++;
         }
 
         // Convert the translated JSON back to the original subtitle format
         const translatedSubtitles = subsrt.build(jsonSubtitles, { format: format });
-        return JSON.stringify(translatedSubtitles, null, 2);
+        return translatedSubtitles;
     } catch (error) {
         throw new Error('Error processing subtitle file: ' + error.message);
     }
 }
 
-async function translateBatch(batch, targetLang) {
-    try {
-        // Extract text from the batch
-        const texts = batch.map(line => line.text);
+function groupLinesForTranslation(lines, maxLength) {
+    const groups = [];
+    let currentGroup = [];
+    let currentLength = 0;
 
-        // Translate the batch
-        const translations = await Promise.all(texts.map(text => translateText(text, targetLang)));
-        console.log(translations);
-        return translations;
-    } catch (error) {
-        console.error('Error translating batch:', error.message);
-        // Return the original texts if translation fails
-        return batch.map(line => line.text);
+    for (const line of lines) {
+        if (currentLength + line.text.length + 1 > maxLength) { // +1 for space or new line
+            groups.push(currentGroup);
+            currentGroup = [];
+            currentLength = 0;
+        }
+        currentGroup.push(line);
+        currentLength += line.text.length + 1; // +1 for space or new line
     }
+
+    if (currentGroup.length > 0) {
+        groups.push(currentGroup);
+    }
+
+    return groups;
+}
+
+function splitText(text, numberOfLines) {
+    const words = text.split(' ');
+    const result = [];
+    let currentLine = '';
+
+    for (const word of words) {
+        if (currentLine.length + word.length + 1 > text.length / numberOfLines) {
+            result.push(currentLine.trim());
+            currentLine = '';
+        }
+        currentLine += word + ' ';
+    }
+    if (currentLine.length > 0) {
+        result.push(currentLine.trim());
+    }
+
+    while (result.length < numberOfLines) {
+        result.push('');
+    }
+
+    return result;
 }
 
 async function translateText(text, targetLang) {
