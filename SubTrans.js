@@ -7,7 +7,10 @@ async function translateAndSaveSubtitles(url, format, targetLang) {
     try {
         // Fetch the subtitle content from the URL
         const response = await axios.get(url, { responseType: 'text' });
-        const content = response.data;
+        let content = response.data;
+
+        // Fix common formatting issues
+        content = fixFormattingIssues(content);
 
         // Parse the subtitle content to JSON
         const options = { verbose: true };
@@ -18,7 +21,7 @@ async function translateAndSaveSubtitles(url, format, targetLang) {
 
         // Translate each group of lines
         const translatedGroups = await Promise.all(translationGroups.map(group =>
-            translateText(group.join(' '), targetLang)
+            translateText(group.map(line => line.text).join(' '), targetLang)
         ));
 
         // Reconstruct the translated lines into the original structure
@@ -38,6 +41,16 @@ async function translateAndSaveSubtitles(url, format, targetLang) {
     } catch (error) {
         throw new Error('Error processing subtitle file: ' + error.message);
     }
+}
+
+function fixFormattingIssues(content) {
+    return content.split('\n').map(line => {
+        // Fix incomplete timestamp
+        if (line.match(/^\d{2}:\d{2}:\d{2},\d{3} --> \d{2}:\d{2}:/)) {
+            line = line.replace(/ --> \d{2}:\d{2}:/, ' --> 00:00:00,000');
+        }
+        return line;
+    }).join('\n');
 }
 
 function groupLinesForTranslation(lines, maxLength) {
