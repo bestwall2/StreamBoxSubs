@@ -10,7 +10,7 @@ const sanitizeFilename = require("sanitize-filename");
 const { getSubText, getTvSubs, getMovSubs } = require("./opensubs");
 const fs = require("fs").promises;
 const path = require("path");
-const translateSubs = require("./SubTrans.js");
+const translateAndSaveSubtitles = require("./SubTrans.js");
 const app = express();
 const port = 8000;
 
@@ -199,7 +199,7 @@ app.get('/translateSubtitles', async (req, res) => {
         }
 
         // Translate and get the subtitles
-        const result = await translateSubs(Url, format, targetLang);
+        const result = await translateAndSaveSubtitles(Url, format, targetLang);
 
         // Set appropriate headers for the response
         res.setHeader('Content-Type', 'text/plain; charset=utf-8');
