@@ -1,6 +1,6 @@
 const axios = require('axios');
 const fs = require('fs');
-const { translate } = require('bing-translate-api').default;
+const { translate } = require('bing-translate-api');
 const subsrt = require('subsrt');
 
 async function translateAndSaveSubtitles(url, format, targetLang) {
