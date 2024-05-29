@@ -202,7 +202,7 @@ app.get('/translateSubtitles', async (req, res) => {
         const result = await translateAndSaveSubtitles(Url, format, targetLang);
         // Set appropriate headers for the response
         res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-        //res.setHeader('Content-Disposition', `attachment; filename="translated.${format}"`);
+        res.setHeader('Content-Disposition', `attachment; filename="translated.${format}"`);
         res.send(result);
     } catch (error) {
         console.error('Error translating subtitles:', error.message);
