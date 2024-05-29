@@ -10,7 +10,7 @@ const sanitizeFilename = require("sanitize-filename");
 const { getSubText, getTvSubs, getMovSubs } = require("./opensubs");
 const fs = require("fs").promises;
 const path = require("path");
-const translateSubs = require("./SubTrans.js");
+//const translateSubs = require("./SubTrans.js");
 const app = express();
 const port = 8000;
 
@@ -188,7 +188,7 @@ app.get("/subs/anime/:id/:epNumber/:lang", async (req, res) => {
     }
 });
 // translate subs rout
-
+/*
 app.get('/translateSubtitles', async (req, res) => {
     try {
         const { Url, format, targetLang } = req.query;
@@ -210,7 +210,7 @@ app.get('/translateSubtitles', async (req, res) => {
         return res.status(500).json({ error: 'Internal server error: ' + error.message });
     }
 });
-
+*/
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
