@@ -23,6 +23,8 @@
     "sanitize-filename": "^1.6.3",
     "subscene": "^0.0.1",
     "axios": "^1.6.7",
+    "bing-translate-api": "^4.0.2",
+    "subsrt": "^1.1.1",
     "cheerio": "^1.0.0-rc.12"
   }
 }
