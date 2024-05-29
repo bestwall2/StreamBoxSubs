@@ -1,5 +1,4 @@
 const axios = require('axios');
-const fs = require('fs');
 const { translate } = require('bing-translate-api');
 const subsrt = require('subsrt');
 
@@ -10,12 +9,11 @@ async function translateAndSaveSubtitles(url, format, targetLang) {
         const content = response.data;
 
         // Parse the subtitle content to JSON
-        const options = { verbose: true };
-        const jsonSubtitles = subsrt.parse(content, options);
+        const jsonSubtitles = subsrt.parse(content, { verbose: true });
 
-        // Translate multiple lines concurrently
-        const translationPromises = jsonSubtitles.map(line => translateText(line.text, targetLang));
-        const translatedTexts = await Promise.all(translationPromises);
+        // Translate multiple lines with a concurrency limit
+        const MAX_CONCURRENCY = 5;
+        const translatedTexts = await translateLinesWithConcurrency(jsonSubtitles.map(line => line.text), targetLang, MAX_CONCURRENCY);
 
         // Update the subtitle lines with the translated texts
         for (let i = 0; i < jsonSubtitles.length; i++) {
@@ -23,17 +21,35 @@ async function translateAndSaveSubtitles(url, format, targetLang) {
             jsonSubtitles[i].content = translatedTexts[i];
         }
 
-        // Save the translated JSON to a file
-       // fs.writeFileSync(outputJsonFile, JSON.stringify(jsonSubtitles, null, 2), 'utf8');
-
         // Convert the translated JSON back to the original subtitle format
         const translatedSubtitles = subsrt.build(jsonSubtitles, { format: format });
-       // fs.writeFileSync(outputSubtitleFile, translatedSubtitles, 'utf8');
 
-        return translatedSubtitles ;
+        return translatedSubtitles;
     } catch (error) {
         throw new Error('Error processing subtitle file: ' + error.message);
     }
+}
+
+async function translateLinesWithConcurrency(lines, targetLang, maxConcurrency) {
+    const results = [];
+    const queue = [...lines];
+    
+    async function worker() {
+        while (queue.length > 0) {
+            const line = queue.shift();
+            try {
+                const translatedText = await translateText(line, targetLang);
+                results.push(translatedText);
+            } catch (error) {
+                results.push(line); // Add the original line if translation fails
+            }
+        }
+    }
+
+    const workers = Array(maxConcurrency).fill(null).map(() => worker());
+    await Promise.all(workers);
+
+    return results;
 }
 
 async function translateText(text, targetLang) {
