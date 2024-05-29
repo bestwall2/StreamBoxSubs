@@ -189,26 +189,28 @@ app.get("/subs/anime/:id/:epNumber/:lang", async (req, res) => {
 });
 // translate subs rout
 
-app.get("/translateSubtitles", async (req, res) => {
+app.get('/translateSubtitles', async (req, res) => {
     try {
         const { Url, format, targetLang } = req.query;
-        if (!Url) {
-            return res
-                .status(400)
-                .json({ error: "Url is a required parameter." });
+
+        // Validate query parameters
+        if (!Url || !format || !targetLang) {
+            return res.status(400).json({ error: 'Url, format, and targetLang are required parameters.' });
         }
+
+        // Translate and get the subtitles
         const result = await translateAndSaveSubtitles(Url, format, targetLang);
 
         // Set appropriate headers for the response
-        res.setHeader("Content-Type", "text/plain; charset=utf-8");
+        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        res.setHeader('Content-Disposition', `attachment; filename="translated.${format}"`);
         res.send(result);
     } catch (error) {
-        console.error("Error downloading subtitles:", error.message);
-        return res
-            .status(500)
-            .json({ error: "Internal server error." + error.message });
+        console.error('Error translating subtitles:', error.message);
+        return res.status(500).json({ error: 'Internal server error: ' + error.message });
     }
 });
+
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
