@@ -3,7 +3,7 @@ const fs = require('fs');
 const { translate } = require('bing-translate-api');
 const subsrt = require('subsrt');
 
-async function translateAndSaveSubtitles(url, format, outputJsonFile, outputSubtitleFile, targetLang) {
+async function translateAndSaveSubtitles(url, format, targetLang) {
     try {
         // Fetch the subtitle content from the URL
         const response = await axios.get(url, { responseType: 'text' });
