@@ -54,7 +54,7 @@ async function translateLinesWithConcurrency(lines, targetLang, maxConcurrency) 
 
 async function translateText(text, targetLang) {
     try {
-        const res = await translate(text, null, targetLang);
+        const res = "";// await translate(text, null, targetLang);
         return res.translation;
     } catch (error) {
         console.error('Error translating text:', error.message);
