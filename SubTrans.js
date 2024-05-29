@@ -48,7 +48,7 @@ async function translateBatch(batch, targetLang) {
 
         // Translate the batch
         const translations = await Promise.all(texts.map(text => translateText(text, targetLang)));
-
+        console.log(translations);
         return translations;
     } catch (error) {
         console.error('Error translating batch:', error.message);
