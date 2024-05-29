@@ -200,7 +200,6 @@ app.get('/translateSubtitles', async (req, res) => {
 
         // Translate and get the subtitles
         const result = await translateAndSaveSubtitles(Url, format, targetLang);
-
         // Set appropriate headers for the response
         res.setHeader('Content-Type', 'text/plain; charset=utf-8');
         res.setHeader('Content-Disposition', `attachment; filename="translated.${format}"`);
