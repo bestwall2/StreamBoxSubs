@@ -10,7 +10,7 @@
     {
       "src": "/(.*)",
       "dest": "/",
-      "maxDuration": 25
+      "maxDuration": 60
     }
   ]
 }
