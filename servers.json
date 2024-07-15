@@ -10,6 +10,7 @@
         "MIXED-SLOWED SERVER": "https://watch.lonelil.ru/watch/show/(id).(se).(ep)",
         "KDRAMA-OLD-SLOWED": "https://www.braflix.ru/tv/(id)/(se)/(ep)?play=true",
         "FAST-SERVER": "https://binged.live/watch/tv/(id)?season=(se)&ep=(ep)"
-    }
-    "additions":["", "", "", ""]
+    }, 
+    "additions":["", "", "", ""], 
+    "FEnds":["", "", "", "", ""]
 }
