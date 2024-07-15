@@ -10,7 +10,29 @@
         "MIXED-SLOWED SERVER": "https://watch.lonelil.ru/watch/show/(id).(se).(ep)",
         "KDRAMA-OLD-SLOWED": "https://www.braflix.ru/tv/(id)/(se)/(ep)?play=true",
         "FAST-SERVER": "https://binged.live/watch/tv/(id)?season=(se)&ep=(ep)"
-    }, 
-    "additions":["", "", "", ""], 
-    "FEnds":["", "", "", "", ""]
+    },
+    "additions": [
+        ".png?base=ac.bigtimedelivery.net",
+        "&referer=https://rabbitstream.net/",
+        "https://m3u8.justchill.workers.dev/?url=",
+        "https://edge.proxy-swarm.online/?destination=",
+        "https://workerproxy.warezcdn.workers.dev/?url=",
+        "https://edge.sudo-flix.lol/?destination=",
+        "https://streaming.braflix.ru/proxy/m3u8/",
+        "/{\"referer\":\"https://megacloud.tv\"}",
+        "/{\"referer\":\"https://rabbitstream.net\"}",
+        "https://watch.lonelil.ru/api/proxy/m3u8/"
+    ],
+    "FEnds": [
+        "master.m3u8",
+        "/h/list;",
+        "/list.m3u8",
+        "/playlist.m3u8",
+        "index.m3u8",
+        "weblink/view/", 
+        ".mp4", 
+        ".m3u8",
+        "video-delivery"
+    ]
+    "functions":""
 }
