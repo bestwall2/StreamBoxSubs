@@ -29,10 +29,20 @@
         "/list.m3u8",
         "/playlist.m3u8",
         "index.m3u8",
-        "weblink/view/", 
-        ".mp4", 
+        "weblink/view/",
+        ".mp4",
         ".m3u8",
         "video-delivery"
-    ]
-    "functions":""
+    ],
+    "functions": "javascript:var button1 = document.getElementById('btn-play');" +
+    "var button2 = document.getElementById('btn-active');" +
+    "if (button1) { button1.click(); } " +
+    "else if (button2) { button2.click(); } " +
+    "else { console.log('Buttons not found'); }" +
+    "setTimeout(() => {" +
+    "    const element = document.querySelector('body > main > div > button');" +
+    "    if (element) {" +
+    "        element.click();" +
+    "    }" +
+    "}, 3000);"
 }
