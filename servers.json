@@ -1,0 +1,15 @@
+{
+    "movies": {
+        "USA SERVER": "https://vidsrc.to/embed/movie/(id)",
+        "MIXED-SLOWED SERVER": "https://watch.lonelil.ru/watch/movie/(id)",
+        "KDRAMA-OLD-SLOWED": "https://www.braflix.ru/movie/(id)?play=true",
+        "FAST-SERVER": "https://binged.live/watch/movie/(id)"
+    },
+    "series": {
+        "USA SERVER": "https://vidsrc.to/embed/tv/(id)/(se)/(ep)/",
+        "MIXED-SLOWED SERVER": "https://watch.lonelil.ru/watch/show/(id).(se).(ep)",
+        "KDRAMA-OLD-SLOWED": "https://www.braflix.ru/tv/(id)/(se)/(ep)?play=true",
+        "FAST-SERVER": "https://binged.live/watch/tv/(id)?season=(se)&ep=(ep)"
+    }
+    "additions":["", "", "", ""]
+}
